@@ -31,13 +31,16 @@ import {
   VisibleItemsPipe
 } from 'ngx-forge';
 
+import { DependencyModule } from 'analytics-driven-ui';
+
 @NgModule({
   imports: [
     CommonModule,
     ReactiveFormsModule,
     WizardModule,
     FilterModule,
-    NgxForgeModule
+    NgxForgeModule,
+    DependencyModule
   ],
   declarations: [
     ForgeImportWizardComponent,
