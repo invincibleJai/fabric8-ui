@@ -23,8 +23,8 @@ export class ForgeQuickstartComponent extends AbstractWizard {
     this.endPoint = 'fabric8-new-project';
     this.steps = configureSteps();
     this.isLoading = true;
-    this.EXECUTE_STEP_INDEX = this.steps[6].priority - 1;
-    this.LAST_STEP = this.steps[7].priority - 1;
+    this.EXECUTE_STEP_INDEX = this.steps[8].priority - 1;
+    this.LAST_STEP = this.steps[9].priority - 1;
   }
 
   ngOnInit(): void {
@@ -39,6 +39,7 @@ export class ForgeQuickstartComponent extends AbstractWizard {
   }
 
   executeStep(wizardSteps = this.wizard.steps): void {
+    debugger;
     this.isLoading = true;
     this.wizard.config.nextTitle = 'Ok';
     wizardSteps[this.LAST_STEP].config.nextEnabled = false;

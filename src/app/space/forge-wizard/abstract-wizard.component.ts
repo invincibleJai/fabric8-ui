@@ -103,6 +103,7 @@ export abstract class AbstractWizard implements OnInit {
     if (this.history.stepIndex === this.EXECUTE_STEP_INDEX + 1) { // execute
       this.executeStep(flattenWizardSteps(this.wizard));
     } else if (this.history.stepIndex === this.LAST_STEP + 1) { // addcodebaseStep
+      debugger;
       this.reviewStep();
     } else { // init or next
       this.loadUi().catch(error => {
@@ -128,6 +129,7 @@ export abstract class AbstractWizard implements OnInit {
   // to, from are zero-based index
   move(from: number, to: number, wizardSteps = this.wizard.steps) {
     let serverSideErrors = null;
+    debugger;
     if (to === this.EXECUTE_STEP_INDEX) { // last forge step, change next to finish
       this.wizard.config.nextTitle = 'Finish';
     }
@@ -165,6 +167,7 @@ export abstract class AbstractWizard implements OnInit {
     if (!isNullOrUndefined(serverSideErrors)) {
       this.currentGui.messages = serverSideErrors;
     }
+    debugger;
     this.form = this.buildForm(this.currentGui, wizardSteps[to]); // wizard.steps is 0-based array
     // post processing catch server-side errors
     wizardSteps[to].config.nextEnabled = this.form.valid
@@ -174,7 +177,20 @@ export abstract class AbstractWizard implements OnInit {
 
   loadUi(): Promise<Gui> {
     this.isLoading = true;
+    debugger;
+    // let tempHistory: any;
+    // if(this.history && this.history.state && this.history.state.length == 4){
+    //   this.history.state.splice(2,1);
+    //   tempHistory = this.history;
+    //   tempHistory.stepIndex = 4;
+    // }else{
+    //   tempHistory = this.history;
+    // }
     return this.forgeService.loadGui(this.endPoint, this.history).then((gui: Gui) => {
+      debugger;
+      if(this.history.stepIndex == 2 || this.history.stepIndex == 1 ){
+        gui.state.canMoveToNextStep = true;
+      }
       let from = this.history.stepIndex;
       this.history.add(gui);
       let to = this.history.stepIndex;
@@ -186,6 +202,7 @@ export abstract class AbstractWizard implements OnInit {
       }
       this.move(from, to, flattenWizardSteps(this.wizard));
       this.isLoading = false;
+      debugger;
       return gui;
     });
   }
@@ -198,6 +215,7 @@ export abstract class AbstractWizard implements OnInit {
         group[input.name] = new FormControl(input.value || '', Validators.required);
         if (!input.value || input.value === '' || input.value.length === 0) {
           // is empty for single and multiple select input
+          debugger;
           to.config.nextEnabled = false;
         }
       } else {

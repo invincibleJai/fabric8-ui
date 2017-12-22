@@ -9,14 +9,20 @@ export function configureSteps(): WizardStepConfig[] {
     title: 'Stack and Code'
   } as WizardStepConfig);
   steps.push({
-    id: 'deployment',
+    id: 'Quickstart-temp',
     priority: 2,
+    allowClickNav: false,
+    title: 'Dependency Editor'
+  } as WizardStepConfig);
+  steps.push({
+    id: 'deployment',
+    priority: 3,
     allowClickNav: false,
     title: 'Deployment'
   } as WizardStepConfig);
   steps.push({
     id: 'summary',
-    priority: 3,
+    priority: 4,
     allowClickNav: false,
     title: 'Summary'
   } as WizardStepConfig);
@@ -53,6 +59,13 @@ export function configureSteps(): WizardStepConfig[] {
     id: 'summarysubstep',
     priority: 5,
     title: 'Summary',
+    allowClickNav: false,
+    nextEnabled: false
+  } as WizardStepConfig);
+  steps.push({
+    id: 'analyticssubstep',
+    priority: 6,
+    title: 'Application',
     allowClickNav: false,
     nextEnabled: false
   } as WizardStepConfig);

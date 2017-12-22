@@ -42,7 +42,8 @@ export class AnalyzeOverviewComponent implements OnInit, OnDestroy {
   openForgeWizard(addSpace: TemplateRef<any>) {
     if (this.authentication.getGitHubToken()) {
       this.selectedFlow = 'selectFlow';
-      this.modalRef = this.modalService.show(addSpace, {class: 'modal-lg'});
+      //this.modalRef = this.modalService.show(addSpace, {class: 'modal-lg'});
+      this.modalRef = this.modalService.show(addSpace, {class: 'modal-width'});
     } else {
       this.broadcaster.broadcast('showDisconnectedFromGitHub', {'location': window.location.href });
     }
