@@ -154,7 +154,7 @@ export const routes: Routes = [
   {
     path: ':entity/:space/applauncher',
     resolve: {
-      context: ContextResolver,
+      context: ContextResolver
     },
     loadChildren: './space/app-launcher/app-launcher.module#AppLauncherModule',
     data: {

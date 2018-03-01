@@ -9,6 +9,7 @@ export class AppLauncherProjectProgressService implements ProjectProgressService
   private progress: Progress[];
   private _progressSubject: Subject<Progress[]> = new Subject();
   private timer: Subscription;
+  statusMessages = new Subject<any>();
 
   constructor() {
   }
@@ -16,6 +17,17 @@ export class AppLauncherProjectProgressService implements ProjectProgressService
   getProgress(): Observable<Progress[]> {
     this.initTimer(); // Timer to simulate progress
     return this._progressSubject.asObservable();
+  }
+
+  connect(uuidLink: string) {
+    // this.ws = new WebSocket(this.END_POINT + uuidLink);
+    // this.ws.onmessage = (event: MessageEvent) => {
+    //   let data = JSON.parse(event.data);
+    //   this.statusMessages.next(data);
+    // };
+    // this.ws.onerror = (error: MessageEvent) => {
+    //   this.statusMessages.error(error);
+    // };
   }
 
   // Private

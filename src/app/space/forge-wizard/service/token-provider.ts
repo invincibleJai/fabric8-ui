@@ -13,4 +13,8 @@ export class KeycloakTokenProvider extends TokenProvider {
   getToken(): string {
     return this.authService.getToken();
   }
+
+  getGitHubToken(): string {
+    return this.authService.getGitHubToken();
+  }
 }

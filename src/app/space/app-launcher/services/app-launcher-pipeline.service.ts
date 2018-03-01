@@ -37,7 +37,7 @@ export class AppLauncherPipelineService implements PipelineService {
     }));
   }
 
-/*
+
   getPipelines(): Observable<Pipeline[]> {
     let runtimeEndPoint: string = this.END_POINT + this.API_BASE;
     return this.options.flatMap((option) => {
@@ -46,8 +46,8 @@ export class AppLauncherPipelineService implements PipelineService {
         .catch(this.handleError);
     });
   }
-*/
 
+/*
   getPipelines(): Observable<Pipeline[]> {
     let pipelines = Observable.of([
       {
@@ -72,7 +72,7 @@ export class AppLauncherPipelineService implements PipelineService {
       }] as Pipeline[]);
     return pipelines;
   }
-
+*/
   private handleError(error: Response | any) {
     // In a real world app, we might use a remote logging infrastructure
     let errMsg: string;

@@ -16,6 +16,9 @@ import {
   TokenProvider
 } from 'ngx-forge';
 
+//import { AuthenticationService } from 'ngx-login-client';
+import { GitHubService } from '../../create/codebases/services/github.service';
+import { KeycloakTokenProvider } from '../../forge-wizard/service/token-provider';
 import { AppLauncherDependencyCheckService } from '../services/app-launcher-dependency-check.service';
 import { AppLauncherGitproviderService } from '../services/app-launcher-gitprovider.service';
 import { AppLauncherMissionRuntimeService } from '../services/app-launcher-mission-runtime.service';
@@ -25,6 +28,8 @@ import { AppLauncherProjectSummaryService } from '../services/app-launcher-proje
 import { AppLauncherTargetEnvironmentService } from '../services/app-launcher-target-environment.service';
 import { CreateAppRoutingModule } from './create-app-routing.module';
 import { CreateAppComponent } from './create-app.component';
+//import { KeycloakTokenProvider } from './service/token-provider';
+
 
 @NgModule({
   imports: [
@@ -35,6 +40,7 @@ import { CreateAppComponent } from './create-app.component';
   ],
   declarations: [ CreateAppComponent ],
   providers: [
+    GitHubService,
     HelperService,
     { provide: DependencyCheckService, useClass: AppLauncherDependencyCheckService},
     { provide: GitProviderService, useClass: AppLauncherGitproviderService},
@@ -42,8 +48,7 @@ import { CreateAppComponent } from './create-app.component';
     { provide: PipelineService, useClass: AppLauncherPipelineService },
     { provide: ProjectProgressService, useClass: AppLauncherProjectProgressService },
     { provide: ProjectSummaryService, useClass: AppLauncherProjectSummaryService },
-    { provide: TargetEnvironmentService, useClass: AppLauncherTargetEnvironmentService},
-    TokenProvider
+    { provide: TargetEnvironmentService, useClass: AppLauncherTargetEnvironmentService}
   ]
 })
 export class CreateAppModule {

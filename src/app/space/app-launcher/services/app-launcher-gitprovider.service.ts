@@ -1,11 +1,75 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { Headers, Http, RequestOptions, Response } from '@angular/http';
+
+import { cloneDeep } from 'lodash';
+//import { AUTH_API_URL, AuthenticationService } from 'ngx-login-client';
 import { Observable } from 'rxjs';
 
-import { GitHubDetails, GitProviderService } from 'ngx-forge';
+import { AuthHelperService, GitHubDetails, GitProviderService, HelperService, TokenProvider } from 'ngx-forge';
+import { retry } from 'rxjs/operators/retry';
+//import { ProviderService } from '../../../shared/account/provider.service';
 
 @Injectable()
 export class AppLauncherGitproviderService implements GitProviderService {
-  constructor() {
+    // TODO: remove the hardcodes
+    private END_POINT: string = '';
+    private API_BASE: string = 'services/git/';
+    private ORIGIN: string = '';
+    private PROVIDER: string = 'GitHub';
+    private cache: Map<string, Observable<any>>;
+    private gitHubUrl: string;
+    private linkUrl: string;
+
+    private static readonly HEADERS = new Headers({
+      'Content-Type': 'application/json'
+    });
+
+    constructor(
+      private http: Http,
+      private helperService: HelperService,
+      private tokenProvider: TokenProvider,
+      private authHelperService: AuthHelperService
+    ) {
+      if (this.helperService) {
+        this.END_POINT = this.helperService.getBackendUrl();
+        this.ORIGIN = this.helperService.getOrigin();
+        this.cache = new Map();
+        this.gitHubUrl = 'https://api.github.com';
+        this.linkUrl = this.authHelperService.getAuthApiURl() + 'token/link';
+      }
+    }
+
+    private get options(): Observable<RequestOptions> {
+      let headers = new Headers();
+      headers.append('X-App', 'osio');
+      headers.set('x-git-provider', this.PROVIDER);
+      return Observable.fromPromise(this.tokenProvider.token.then((token) => {
+        // TODO : pass token if needed to test
+        // token = 'token';
+        headers.append('Authorization', 'Bearer ' + token);
+        return new RequestOptions({
+          headers: headers
+        });
+      }));
+    }
+
+  /**
+   * Link an Identity Provider account to the user account
+   *
+   * @param provider Identity Provider name to link to the user's account
+   * @param redirect URL to be redirected to after successful account linking
+   */
+  link(provider: string, redirect: string): void {
+    let linkURL = this.linkUrl + '?for=' + provider + '&redirect=' +  encodeURIComponent(redirect) ;
+    this.http
+    .get(linkURL)
+    .map(response => {
+      let redirectInfo = response.json() as any;
+      this.redirectToAuth(redirectInfo.redirect_location);
+    })
+    .catch((error) => {
+      return this.handleError(error);
+    }).subscribe();
   }
 
   /**
@@ -16,8 +80,66 @@ export class AppLauncherGitproviderService implements GitProviderService {
   connectGitHubAccount(redirectUrl: string): void {
     // let url = "https://github.com/login/oauth/authorize?client_id=" + this.clientId +
     //  "&redirect_uri=" + encodeURIComponent(redirectUrl);
-    this.redirectToAuth(redirectUrl);
+    //this.providerService.linkGitHub(redirectUrl);
+    this.link('https://github.com', redirectUrl);
+    //this.redirectToAuth(redirectUrl);
   }
+
+  /**
+   * Get GitHub headers for authentified user
+   *
+   * Note: This was made public for the unit tests
+   *
+   * @returns {Headers}
+   */
+  // getGitHubHeaders(): Observable<Headers> {
+  //   return Observable.fromPromise(this.tokenProvider.gitHubToken.then((token) => {
+  //     let newHeaders =  cloneDeep(AppLauncherGitproviderService.HEADERS);
+  //     newHeaders.set('X-Git-Token', `${token}`);
+  //     newHeaders.set('Authorization', 'Bearer token');
+  //     newHeaders.set('x-app', this.ORIGIN);
+  //     newHeaders.set('x-git-provider', this.PROVIDER);
+  //     return newHeaders;
+  //   }));
+  // }
+
+  /**
+   * Get GitHub repos associated with given user name
+   *
+   * @param userName The GitHub user name
+   * @returns {Observable<any>}
+   */
+  private getGitHubUserData(): Observable<any> {
+    let url = this.END_POINT + this.API_BASE + 'user';
+    let res = this.options.flatMap((option) => {
+      return this.http.get(url, option)
+        .map(response => response.json() as any)
+        .catch(error => {
+          return Observable.throw(error);
+        });
+      });
+    return res;
+  }
+
+
+   /**
+   * Get GitHub Organizations associated with given user name
+   *
+   * @param userName The GitHub user name
+   * @returns {Observable<any>}
+   */
+  getUserOrgs(userName: string): Observable<any> {
+    let url = this.END_POINT + this.API_BASE + 'organizations';
+    let res = this.options.flatMap((option) => {
+      return this.http.get(url, option)
+        .map(response => response.json() as any)
+        .catch(error => {
+          return Observable.throw(error);
+        });
+      });
+    return res;
+  }
+
 
   /**
    * Returns GitHub details associated with the logged in user
@@ -25,28 +147,59 @@ export class AppLauncherGitproviderService implements GitProviderService {
    * @returns {Observable<GitHubDetails>} The GitHub details associated with the logged in user
    */
   getGitHubDetails(): Observable<GitHubDetails> {
-    let orgs = [];
-    for (let i = 0; i < GitHubMock.ORGS.length; i++) {
-      orgs.push(GitHubMock.ORGS[i].login);
-    }
-    let gitHubDetails = {
-      authenticated: this.isPageRedirect() ? true : false,
-      avatar: GitHubMock.USER.avatar_url,
-      login: GitHubMock.USER.login,
-      organizations: orgs
-    } as GitHubDetails;
-    return this.isPageRedirect() ? Observable.of(gitHubDetails) : Observable.empty();
+    return this.getGitHubUserData().flatMap(user => {
+      if (user && user.login) {
+        let orgs = [];
+        return this.getUserOrgs(user.login).flatMap(orgsArr => {
+          if (orgsArr && orgsArr.length >= 0) {
+            // for (let i = 0; i < orgsArr.length; i++) {
+            //   orgs.push(orgsArr[i].login);
+            // }
+            orgs = orgsArr;
+            orgs.push(user.login);
+            let gitHubDetails = {
+              authenticated: this.isPageRedirect() ? true : false,
+              avatar: user.avatarUrl,
+              login: user.login,
+              organizations: orgs
+            } as GitHubDetails;
+            return this.isPageRedirect() ? Observable.of(gitHubDetails) : Observable.empty();
+          } else {
+            return Observable.empty();
+          }
+        });
+      } else {
+        return Observable.empty();
+      }
+    });
+
   }
 
   /**
    * Returns true if GitHub repo exists
    *
-   * @param {string} fullName The GitHub full name (e.g., fabric8-launcher/ngx-launcher)
+   * @param {string} org The GitHub org (e.g., fabric8-launcher/ngx-launcher)
+   * @param {string} repoName The GitHub repos name (e.g., ngx-launcher)
    * @returns {Observable<boolean>} True if GitHub repo exists
    */
-  isGitHubRepo(fullName: string): Observable<boolean> {
-    let result = (fullName === 'patternfly/patternfly'); // Simulate a existing repo
-    return Observable.of(result);
+  isGitHubRepo(org: string, repoName: string): Observable<boolean> {
+    let fullName = org + '/' + repoName;
+    let url = this.END_POINT + this.API_BASE + 'repositories/?organization=' + org;
+    let res = this.options.flatMap((option) => {
+      return this.http.get(url, option)
+        .map(response => {
+            let repoList: string[] =  response.json();
+            if (repoList.indexOf(fullName) === -1) {
+              return false;
+            } else {
+              return true;
+            }
+          })
+        .catch(error => {
+          return Observable.throw(error);
+        });
+      });
+    return res;
   }
 
   // Private
@@ -66,6 +219,20 @@ export class AppLauncherGitproviderService implements GitProviderService {
 
   private redirectToAuth(url: string) {
     window.location.href = url;
+  }
+
+  private handleError(error: Response | any) {
+    // In a real world app, we might use a remote logging infrastructure
+    let errMsg: string;
+    if (error instanceof Response) {
+      const body = error.json() || '';
+      const err = body.error || JSON.stringify(body);
+      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+    } else {
+      errMsg = error.message ? error.message : error.toString();
+    }
+    console.error(errMsg);
+    return Observable.throw(errMsg);
   }
 }
 

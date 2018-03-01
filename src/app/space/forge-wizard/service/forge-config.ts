@@ -13,7 +13,7 @@ export class ForgeConfig extends Config {
     let settings = {backend_url: 'TO_BE_DEFINED'};
 
     if (apiUrl) {
-      settings['backend_url'] = Location.stripTrailingSlash(apiUrl) + '/api/launchpad';
+      settings['backend_url'] = Location.stripTrailingSlash(apiUrl) + '/api/';
     }
 
     this.settings = settings;
