@@ -6,10 +6,7 @@ import {
   Response
 } from '@angular/http';
 
-import {
-  Observable,
-  Subject
-} from 'rxjs';
+import { Observable } from 'rxjs';
 
 import {
   HelperService,
@@ -80,7 +77,6 @@ export class AppLauncherProjectSummaryService implements ProjectSummaryService {
   }
 
   private handleError(error: Response | any) {
-    // In a real world app, we might use a remote logging infrastructure
     let errMsg: string = '';
     if (error instanceof Response) {
       if (error.status !== 401) {

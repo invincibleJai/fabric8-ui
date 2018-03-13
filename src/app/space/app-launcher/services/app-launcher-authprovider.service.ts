@@ -1,4 +1,4 @@
-import { Inject, Injectable, OpaqueToken } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import { AuthHelperService } from 'ngx-forge';
 
