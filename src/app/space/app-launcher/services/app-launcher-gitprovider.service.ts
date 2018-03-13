@@ -12,6 +12,7 @@ export class AppLauncherGitproviderService implements GitProviderService {
     private ORIGIN: string = '';
     private PROVIDER: string = 'GitHub';
     private linkUrl: string;
+    private gitHubUserLogin: string;
 
     constructor(
       private http: Http,
@@ -119,8 +120,8 @@ export class AppLauncherGitproviderService implements GitProviderService {
         return this.getUserOrgs(user.login).flatMap(orgsArr => {
           if (orgsArr && orgsArr.length >= 0) {
             orgs = orgsArr;
-            // TODO : if need to paas gitHub user ID along with org
-            //orgs.push(user.login);
+            this.gitHubUserLogin = user.login;
+            orgs.push(this.gitHubUserLogin);
             let gitHubDetails = {
               authenticated: this.isPageRedirect() ? true : false,
               avatar: user.avatarUrl,
@@ -148,7 +149,12 @@ export class AppLauncherGitproviderService implements GitProviderService {
    */
   isGitHubRepo(org: string, repoName: string): Observable<boolean> {
     let fullName = org + '/' + repoName;
-    let url = this.END_POINT + this.API_BASE + 'repositories/?organization=' + org;
+    let url: string;
+    if (this.gitHubUserLogin === org) {
+      url = this.END_POINT + this.API_BASE + 'repositories';
+    } else {
+      url = this.END_POINT + this.API_BASE + 'repositories/?organization=' + org;
+    }
     let res = this.options.flatMap((option) => {
       return this.http.get(url, option)
         .map(response => {

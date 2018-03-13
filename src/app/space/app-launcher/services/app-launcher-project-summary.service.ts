@@ -96,8 +96,7 @@ export class AppLauncherProjectSummaryService implements ProjectSummaryService {
   }
 
   private getPayload(summary: Summary) {
-    let payload = '';
-    payload =
+    let payload =
     'missionId=' + summary.mission.id +
     '&runtimeId=' + summary.runtime.id +
     '&runtimeVersion=' + summary.runtime.version.id +
@@ -107,8 +106,10 @@ export class AppLauncherProjectSummaryService implements ProjectSummaryService {
     '&groupId=' + summary.dependencyCheck.groupId +
     '&artifactId=' + summary.dependencyCheck.mavenArtifact +
     '&spacePath=' + summary.dependencyCheck.spacePath +
-    '&gitOrganization=' + summary.gitHubDetails.organization +
     '&gitRepository=' + summary.gitHubDetails.repository;
+    if (summary.gitHubDetails.login !== summary.gitHubDetails.organization) {
+      payload += '&gitOrganization=' + summary.gitHubDetails.organization;
+    }
     return payload;
   }
 
