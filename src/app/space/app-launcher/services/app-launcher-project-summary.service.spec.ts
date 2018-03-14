@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { inject, TestBed } from '@angular/core/testing';
 import { HttpModule, Response, ResponseOptions, XHRBackend } from '@angular/http';
 import { MockBackend } from '@angular/http/testing';
 
@@ -51,21 +51,22 @@ describe('Service: AppLauncherProjectSummaryService', () => {
   beforeEach(() => {
     initTestBed();
     appLauncherProjectSummaryService = TestBed.get(AppLauncherProjectSummaryService);
-    mockService = TestBed.get(XHRBackend);
   });
 
   it('Should return uuid', () => {
-    mockService.connections.subscribe((connection: any) => {
-        connection.mockRespond(new Response(
-          new ResponseOptions({
-            body: JSON.stringify({'uuid': 'e6daff35-5d93-4c38-965a-6a975cf80be1', 'uuid_link': '/status/e6daff35-5d93-4c38-965a-6a975cf80be1'}),
-            status: 200
-          })
-        ));
-    });
-    appLauncherProjectSummaryService.setup(summaryData).subscribe((val: any) => {
-        expect(val).toBeDefined();
-        expect(val.uuid).toEqual('e6daff35-5d93-4c38-965a-6a975cf80be1');
+    inject([AppLauncherProjectSummaryService, XHRBackend], (service, mockBackend) => {
+      mockBackend.connections.subscribe((connection: any) => {
+          connection.mockRespond(new Response(
+            new ResponseOptions({
+              body: JSON.stringify({'uuid': 'e6daff35-5d93-4c38-965a-6a975cf80be1', 'uuid_link': '/status/e6daff35-5d93-4c38-965a-6a975cf80be1'}),
+              status: 200
+            })
+          ));
+      });
+      service.setup(summaryData).subscribe((val: any) => {
+          expect(val).toBeDefined();
+          expect(val.uuid).toEqual('e6daff35-5d93-4c38-965a-6a975cf80be1');
+      });
     });
   });
 
