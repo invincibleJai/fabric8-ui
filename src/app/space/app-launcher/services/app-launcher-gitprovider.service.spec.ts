@@ -3,11 +3,6 @@ import { HttpModule, Response, ResponseOptions, XHRBackend } from '@angular/http
 import { MockBackend } from '@angular/http/testing';
 
 import {
-  Observable,
-  Subject
-} from 'rxjs';
-
-import {
   AuthHelperService, Config, GitHubDetails, HelperService, TokenProvider
 } from 'ngx-forge';
 
