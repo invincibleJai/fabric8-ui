@@ -41,6 +41,7 @@ input,
   }
   .code-imports {
     color: @color-pf-white;
+    overflow-y: auto;
     .alert-danger {
       background-color: transparent;
       border: none;
@@ -80,9 +81,6 @@ input,
         &:hover {
           box-shadow: 0 1px 6px rgba(255, 255, 255, .35);
         }
-        i {
-          font-size: 4em;
-        }
         .codebase-card-container {
           height: 200px;
           display: flex;
@@ -94,6 +92,9 @@ input,
               align-items: center;
               height: 70%;
             }
+          }
+          &-desp {
+            height: 100%;
           }
         }
       }
