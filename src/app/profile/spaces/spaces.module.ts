@@ -6,6 +6,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { Fabric8WitModule } from 'ngx-fabric8-wit';
 import { InfiniteScrollModule } from 'ngx-widgets';
 
+import { FeatureFlagModule } from '../../feature-flag/feature-flag.module';
 import { ForgeWizardModule } from '../../space/forge-wizard/forge-wizard.module';
 import { SpaceWizardModule } from '../../space/wizard/space-wizard.module';
 import { SpacesRoutingModule } from './spaces-routing.module';
@@ -14,6 +15,7 @@ import { SpacesComponent }     from './spaces.component';
 @NgModule({
   imports: [
     CommonModule,
+    FeatureFlagModule,
     SpacesRoutingModule,
     ModalModule.forRoot(),
     ForgeWizardModule,
