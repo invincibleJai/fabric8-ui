@@ -9,6 +9,7 @@ import {
 
 import { DeploymentApiService } from '../../create/deployments/services/deployment-api.service';
 import { AppLauncherDependencyCheckService } from './app-launcher-dependency-check.service';
+import { ContextService } from 'app/shared/context.service';
 
 let mockDeploymentApiService: any = {
   getApplications(): Observable<any[]> {
@@ -30,6 +31,7 @@ function initTestBed() {
         {
             provide: XHRBackend, useClass: MockBackend
         },
+        { provide: ContextService, useValue: {} },
         { provide: DeploymentApiService, useValue: mockDeploymentApiService }
     ]
   });
