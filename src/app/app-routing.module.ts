@@ -140,7 +140,8 @@ export const routes: Routes = [
   {
     path: ':entity/:space/create',
     resolve: {
-      context: ContextResolver
+      context: ContextResolver,
+      featureFlagConfig: FeatureFlagResolver
     },
     loadChildren: './space/create/create.module#CreateModule',
     data: {
