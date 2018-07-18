@@ -145,7 +145,8 @@ export const routes: Routes = [
     },
     loadChildren: './space/create/create.module#CreateModule',
     data: {
-      title: 'Create'
+      title: 'Create',
+      featureName: 'Codebases'
     }
   },
 
