@@ -172,7 +172,10 @@
                 </a>
               </li>
               <li id="header_loggedinChat">
-                <a href="https://chat.openshift.io/developers/channels/town-square" target="top" class="pointer">
+                <!-- <a href="https://chat.openshift.io/developers/channels/town-square" target="top" class="pointer">
+                  Chat with us
+                </a> -->
+                <a (click)="openChatBot();" class="pointer">
                   Chat with us
                 </a>
               </li>
@@ -210,4 +213,5 @@
   </nav>
   <fab-about-modal #aboutModal>
   </fab-about-modal>
+  <app-chatbot class="app-chatbot-pos" *ngIf="isChatbotOn" [imgAvatarUrl]=loggedInUser.attributes.imageURL (isChatBotOn)="chatBotStatusHandler($event)" style="position: fixed;right: 0;bottom: 0;z-index: 999;"></app-chatbot>
 </ng-template>

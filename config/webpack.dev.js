@@ -175,6 +175,7 @@ module.exports = function (options) {
             /\/ng2-truncate/,
             /\/ngx-dropdown/,
             /\/ngx-launcher/,
+            /\/osio-chat/,
             /\/ngx-modal/
           ],
           use: ["source-map-loader"],

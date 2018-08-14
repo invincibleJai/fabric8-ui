@@ -27,6 +27,7 @@ interface MenuHiddenCallback {
 export class HeaderComponent implements OnInit, OnDestroy {
   imgLoaded: Boolean = false;
   isIn = false;   // store state
+  isChatbotOn = false;
 
   toggleState() { // click handler
       let bool = this.isIn;
@@ -130,6 +131,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
   logout() {
     this.loginService.logout();
 
+  }
+
+  //trigger chatbot
+  openChatBot() {
+    // this.loginService.logout();
+    this.isChatbotOn = !this.isChatbotOn;
+  }
+
+  // Chat bot status handler
+  chatBotStatusHandler(chatBotStatus: boolean) {
+    this.isChatbotOn = chatBotStatus;
   }
 
   onImgLoad() {
